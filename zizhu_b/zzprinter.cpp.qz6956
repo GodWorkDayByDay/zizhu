@@ -1,0 +1,244 @@
+#include "zzprinter.h"
+
+#include <QDebug>
+
+
+zzprinter::zzprinter()
+{
+
+}
+
+
+void zzprinter::loadprinterdll()
+{
+    dllPath = "printerlib\\TKIOSKDLL.dll";
+
+    /*加载动态库*/
+    loadlib = new QLibrary(dllPath);
+
+    if(loadlib->load()) {
+          qDebug() << "load  dll ok!";
+      } else {
+          qDebug() << "load error!";
+          return ;
+      }
+
+    initFuncs();
+}
+
+int zzprinter::initFuncs()
+{
+    //open serial port
+    Qt_TKIOSK_OpenCom = (TKIOSK_OpenCom)loadlib->resolve("TKIOSK_OpenCom");
+    if (Qt_TKIOSK_OpenCom == NULL) {
+        qDebug() << "TKIOSK_OpenCom eror!";
+        return FAIL;
+    }
+
+    //Set the timeouts of serial port.
+    Qt_TKIOSK_SetComTimeOuts = (TKIOSK_SetComTimeOuts)loadlib->resolve("TKIOSK_SetComTimeOuts");
+    if (Qt_TKIOSK_SetComTimeOuts == NULL) {
+        qDebug() << "TKIOSK_SetComTimeOuts error!";
+        return FAIL;
+    }
+
+    //Write data to port or file
+    Qt_TKIOSK_WriteData = (TKIOSK_WriteData)loadlib->resolve("TKIOSK_WriteData");
+    if (Qt_TKIOSK_WriteData == NULL) {
+        qDebug() << "TKIOSK_WriteData error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_ReadData= (TKIOSK_ReadData)loadlib->resolve("TKIOSK_ReadData");
+    if (Qt_TKIOSK_ReadData == NULL) {
+        qDebug() << "TKIOSK_WriteData error!";
+        return FAIL;
+    }
+
+    //close serial port
+    Qt_TKIOSK_CloseCom = (TKIOSK_CloseCom)loadlib->resolve("TKIOSK_CloseCom");
+    if (Qt_TKIOSK_CloseCom == NULL) {
+        qDebug() << "TKIOSK_CloseCom error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_StartDoc = (TKIOSK_StartDoc)loadlib->resolve("TKIOSK_StartDoc");
+    if (Qt_TKIOSK_StartDoc == NULL) {
+        qDebug() << "TKIOSK_CloseCom error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_BeginSaveToFile = (TKIOSK_BeginSaveToFile)loadlib->resolve("TKIOSK_BeginSaveToFile");
+    if (Qt_TKIOSK_BeginSaveToFile == NULL) {
+        qDebug() << "TKIOSK_CloseCom error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_Reset = (TKIOSK_Reset)loadlib->resolve("TKIOSK_Reset");
+    if (Qt_TKIOSK_Reset == NULL) {
+        qDebug() << "Qt_TKIOSK_Reset error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_SetMode = (TKIOSK_SetMode)loadlib->resolve("TKIOSK_SetMode");
+    if (Qt_TKIOSK_SetMode == NULL) {
+        qDebug() << "Qt_TKIOSK_SetMode error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_SetLineSpacing = (TKIOSK_SetLineSpacing)loadlib->resolve("TKIOSK_SetLineSpacing");
+    if (Qt_TKIOSK_SetLineSpacing == NULL) {
+        qDebug() << "Qt_TKIOSK_SetMode error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_S_SetLeftMarginAndAreaWidth = (TKIOSK_S_SetLeftMarginAndAreaWidth)loadlib->resolve("TKIOSK_S_SetLeftMarginAndAreaWidth");
+    if (Qt_TKIOSK_S_SetLeftMarginAndAreaWidth == NULL) {
+        qDebug() << "Qt_TKIOSK_S_SetLeftMarginAndAreaWidth error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_SetRightSpacing = (TKIOSK_SetRightSpacing)loadlib->resolve("TKIOSK_SetRightSpacing");
+    if (Qt_TKIOSK_SetRightSpacing == NULL) {
+        qDebug() << "TKIOSK_SetRightSpacing error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_S_SetAlignMode = (TKIOSK_S_SetAlignMode)loadlib->resolve("TKIOSK_S_SetAlignMode");
+    if (Qt_TKIOSK_S_SetAlignMode == NULL) {
+        qDebug() << "Qt_TKIOSK_S_SetAlignMode error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_S_Textout = (TKIOSK_S_Textout)loadlib->resolve("TKIOSK_S_Textout");
+    if (Qt_TKIOSK_S_Textout == NULL) {
+        qDebug() << "Qt_TKIOSK_S_Textout error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_CutPaper = (TKIOSK_CutPaper)loadlib->resolve("TKIOSK_CutPaper");
+    if (Qt_TKIOSK_CutPaper == NULL) {
+        qDebug() << "TKIOSK_CutPaper error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_EndSaveToFile = (TKIOSK_EndSaveToFile)loadlib->resolve("TKIOSK_EndSaveToFile");
+    if (Qt_TKIOSK_EndSaveToFile == NULL) {
+        qDebug() << "TKIOSK_EndSaveToFile error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_EndDoc = (TKIOSK_EndDoc)loadlib->resolve("TKIOSK_EndDoc");
+    if (Qt_TKIOSK_EndDoc == NULL) {
+        qDebug() << "Qt_TKIOSK_EndDoc error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_OpenDrv = (TKIOSK_OpenDrv)loadlib->resolve("TKIOSK_OpenDrv");
+    if (Qt_TKIOSK_OpenDrv == NULL) {
+        qDebug() << "Qt_TKIOSK_OpenDrv error!";
+        return FAIL;
+    }
+
+    Qt_TKIOSK_SetChineseFont = (TKIOSK_SetChineseFont)loadlib->resolve("TKIOSK_SetChineseFont");
+    if (Qt_TKIOSK_SetChineseFont == NULL) {
+        qDebug() << "Qt_TKIOSK_SetChineseFont error!";
+        return FAIL;
+    }
+    Qt_TKIOSK_S_TestPrint = (TKIOSK_S_TestPrint)loadlib->resolve("TKIOSK_S_TestPrint");
+    if (Qt_TKIOSK_S_TestPrint == NULL) {
+        qDebug() << "Qt_TKIOSK_S_TestPrint error!";
+        return FAIL;
+    }
+    return SUCCESS;
+}
+
+void zzprinter::printtest()
+{
+    int result;
+    HANDLE  hPort = Qt_TKIOSK_OpenCom("COM1",19200,8,1,0x00,0x00);
+    if(hPort == INVALID_HANDLE_VALUE)
+    {
+        qDebug()<<"open com fail";
+        return;
+    }
+    qDebug()<<"hport "<<hPort;
+
+
+
+    result =  Qt_TKIOSK_SetComTimeOuts(hPort, 3000, 3000, 90000, 90000);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"TKIOSK_SetComTimeOuts fail"<< result;
+        return;
+    }
+
+    result = Qt_TKIOSK_SetMode(hPort, 0x00, 0x00);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"Qt_TKIOSK_SetMode fail"<< result;
+        return;
+    }
+
+    result = Qt_TKIOSK_S_SetLeftMarginAndAreaWidth(hPort, 0x00, 20, 500);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"Qt_TKIOSK_S_SetLeftMarginAndAreaWidth fail"<< result;
+        return;
+    }
+
+    result = Qt_TKIOSK_S_Textout(hPort, 0x00, "abcdefghigklmnopqrstuvwxyz\n", 20, 1, 1, 0x00, 0x00);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"Qt_TKIOSK_S_Textout fail"<< result;
+        return;
+    }
+
+    result = Qt_TKIOSK_S_Textout(hPort, 0x00, "1234567890\n", 20, 1, 1, 0x00, 0x00);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"Qt_TKIOSK_S_Textout fail"<< result;
+        return;
+    }
+    char * hehe = "你好啊";
+
+    result = Qt_TKIOSK_S_Textout(hPort, 0x00,hehe, 20, 1, 1, 0x03, 0x00);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"Qt_TKIOSK_S_Textout fail"<< result;
+        return;
+    }
+
+    for(int i = 0 ; i< 10;i++){
+    result = Qt_TKIOSK_S_Textout(hPort, 0x00, "\n", 20, 1, 1, 0x00, 0x00);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"Qt_TKIOSK_S_Textout fail"<< result;
+        return;
+    }
+}
+    result = Qt_TKIOSK_S_TestPrint(hPort,0x00);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"Qt_TKIOSK_S_TestPrint fail"<< result;
+        return;
+    }
+
+//    result = Qt_TKIOSK_CutPaper(hPort, 0x00, 0, 100);
+//    if(result != TKIOSK_SUCCESS)
+//    {
+//        qDebug()<<"Qt_TKIOSK_CutPaper fail"<< result;
+//        return;
+//    }
+
+
+
+
+    result = Qt_TKIOSK_CloseCom(hPort);
+    if(result != TKIOSK_SUCCESS)
+    {
+        qDebug()<<"Qt_TKIOSK_CloseCom fail"<< result;
+        return;
+    }
+}
+
